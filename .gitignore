@@ -1,0 +1,11 @@
+/.gradle/
+/.idea/
+/build/
+/gradle/
+/gradlew
+/gradlew.bat
+gradle.properties
+private.key
+/mappings/
+/__files/
+/docker/
