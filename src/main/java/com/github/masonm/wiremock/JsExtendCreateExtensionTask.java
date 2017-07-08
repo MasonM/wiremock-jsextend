@@ -74,7 +74,7 @@ public class JsExtendCreateExtensionTask implements AdminTask {
 
     private Class<? extends Extension> getExtensionClassForType(String type) {
         switch(type) {
-            case "RequestMatcher":
+            case "RequestMatcherExtension":
                 return RequestMatcherExtension.class;
             case "ResponseTransformer":
                 return ResponseTransformer.class;

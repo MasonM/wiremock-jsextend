@@ -15,7 +15,7 @@ import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
 public class JsExtendRequestMatcherExtensionAdapter extends RequestMatcherExtension {
     @Override
     public String getName() {
-        return "jsextend-match";
+        return "jsextend-requestmatch";
     }
 
     @Override
