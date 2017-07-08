@@ -5,18 +5,19 @@ import com.github.tomakehurst.wiremock.admin.model.PathParams;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.core.Admin;
+import com.github.tomakehurst.wiremock.extension.Extension;
+import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
+import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
+import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import static java.net.HttpURLConnection.*;
 
@@ -32,16 +33,14 @@ public class JsExtendCreateExtensionTask implements AdminTask {
             return ResponseDefinitionBuilder.jsonResponse("Error: " + ex.getMessage(), HTTP_BAD_REQUEST);
         }
 
-        JsExtendUserExtension extension;
-        try {
-            Class<? extends JsExtendUserExtension> extensionBaseClass = getExtensionClassForType(spec.getType());
-            Constructor constructor = extensionBaseClass.getDeclaredConstructor(String.class, String.class, Invocable.class);
-            extension = (JsExtendUserExtension) constructor.newInstance(spec.getName(), spec.getJavascript(), (Invocable) engine);
-        } catch (NoSuchMethodException|InstantiationException|InvocationTargetException|IllegalAccessException ex) {
-            return ResponseDefinitionBuilder.jsonResponse("Server error: " + ex.getMessage(), HTTP_INTERNAL_ERROR);
-        }
+        JsExtendUserExtension extension = new JsExtendUserExtension(
+            getExtensionClassForType(spec.getType()),
+            spec.getName(),
+            spec.getJavascript(),
+            (Invocable) engine
+        );
 
-        JsExtendExtensionRegistry.getInstance().addExtension(spec.getName(), extension);
+        JsExtendExtensionRegistry.getInstance().addExtension(extension);
 
         return ResponseDefinitionBuilder.jsonResponse(extension, HTTP_OK);
     }
@@ -54,9 +53,9 @@ public class JsExtendCreateExtensionTask implements AdminTask {
             engine = manager.getEngineByName("JavaScript");
         }
 
-        engine.put("RequestMatcherExtension", JsExtendRequestMatcherExtension.class);
-        engine.put("ResponseTransformer", JsExtendResponseTransformerExtension.class);
-        engine.put("ResponseDefinitionTransformer", JsExtendResponseDefinitionTransformerExtension.class);
+        engine.put("RequestMatcherExtension", RequestMatcherExtension.class);
+        engine.put("ResponseTransformer", ResponseTransformer.class);
+        engine.put("ResponseDefinitionTransformer", ResponseDefinitionTransformer.class);
 
         engine.put("ResponseDefinition", ResponseDefinition.class);
         engine.put("ResponseDefinitionBuilder", ResponseDefinitionBuilder.class);
@@ -66,14 +65,14 @@ public class JsExtendCreateExtensionTask implements AdminTask {
         return engine;
     }
 
-    private Class<? extends JsExtendUserExtension> getExtensionClassForType(String type) {
+    private Class<? extends Extension> getExtensionClassForType(String type) {
         switch(type) {
             case "RequestMatcher":
-                return JsExtendRequestMatcherExtension.class;
+                return RequestMatcherExtension.class;
             case "ResponseTransformer":
-                return JsExtendResponseTransformerExtension.class;
+                return ResponseTransformer.class;
             case "ResponseDefinitionTransformer":
-                return JsExtendResponseDefinitionTransformerExtension.class;
+                return ResponseDefinitionTransformer.class;
             default:
                 throw new IllegalArgumentException("Invalid type: " + type);
         }

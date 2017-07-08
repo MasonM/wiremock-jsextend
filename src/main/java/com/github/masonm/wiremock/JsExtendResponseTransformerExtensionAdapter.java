@@ -6,6 +6,10 @@ import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
 
+import javax.script.ScriptException;
+
+import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
+
 public class JsExtendResponseTransformerExtensionAdapter extends ResponseTransformer {
     @Override
     public String getName() {
@@ -14,12 +18,18 @@ public class JsExtendResponseTransformerExtensionAdapter extends ResponseTransfo
 
     @Override
     public Response transform(Request request, Response response, FileSource files, Parameters parameters) {
-        Iterable<JsExtendResponseTransformerExtension> transformers = JsExtendExtensionRegistry
+        Iterable<JsExtendUserExtension> extensions = JsExtendExtensionRegistry
             .getInstance()
-            .getExtensionsOfType(JsExtendResponseTransformerExtension.class);
+            .getExtensionsOfType(ResponseTransformer.class);
 
-        for (ResponseTransformer transformer : transformers) {
-            response = transformer.transform(request, response, files, parameters);
+        for (JsExtendUserExtension extension : extensions) {
+            try {
+                response = (Response) extension
+                    .getInvocable()
+                    .invokeFunction("transform", request, response, files, parameters);
+            } catch (ScriptException|NoSuchMethodException e) {
+                return throwUnchecked(e, Response.class);
+            }
         }
         return response;
     }

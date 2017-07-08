@@ -24,5 +24,4 @@ public class JsExtendCreateExtensionSpec {
     public String getType() { return type; }
 
     public String getJavascript() { return javascript; }
-
 }
