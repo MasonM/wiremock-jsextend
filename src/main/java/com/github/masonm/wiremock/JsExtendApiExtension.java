@@ -17,7 +17,7 @@ public class JsExtendApiExtension implements AdminApiExtension {
     @Override
     public void contributeAdminApiRoutes(Router router) {
         router.add(POST, "/extensions", JsExtendCreateExtensionTask.class);
-        router.add(DELETE, "/extensions", JsExtendDeleteExtensionsTask.class);
+        router.add(DELETE, "/extensions", JsExtendResetExtensionsTask.class);
         router.add(GET, "/extensions", JsExtendGetAllExtensionsTask.class);
     }
 }

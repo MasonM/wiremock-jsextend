@@ -13,7 +13,7 @@ import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
 public class JsExtendResponseDefinitionTransformerExtensionAdapter extends ResponseDefinitionTransformer {
     @Override
     public String getName() {
-        return getClass().getName();
+        return "jsextend-responsedefinition";
     }
 
     @Override

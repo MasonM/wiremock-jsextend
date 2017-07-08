@@ -19,7 +19,7 @@ import javax.script.ScriptException;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 
-public class JsExtendDeleteExtensionsTask implements AdminTask {
+public class JsExtendResetExtensionsTask implements AdminTask {
     @Override
     public ResponseDefinition execute(Admin admin, Request request, PathParams pathParams) {
         JsExtendExtensionRegistry.getInstance().deleteExtensions();
