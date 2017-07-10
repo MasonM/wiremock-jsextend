@@ -20,7 +20,7 @@ public class JsExtendApiExtension implements AdminApiExtension {
         router.add(GET, "/extensions", JsExtendGetAllExtensionsTask.class);
 
         router.add(GET, "/extensions/{id}", JsExtendGetExtensionTask.class);
-        router.add(PUT, "/extensions/{id}", JsExtendGetExtensionTask.class);
+        router.add(PUT, "/extensions/{id}", JsExtendEditExtensionTask.class);
         router.add(DELETE, "/extensions/{id}", JsExtendRemoveExtensionTask.class);
     }
 }

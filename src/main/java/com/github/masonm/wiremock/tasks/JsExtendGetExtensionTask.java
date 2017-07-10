@@ -4,12 +4,10 @@ import com.github.masonm.wiremock.model.JsExtendExtensionRegistry;
 import com.github.masonm.wiremock.model.JsExtendUserExtension;
 import com.github.tomakehurst.wiremock.admin.AdminTask;
 import com.github.tomakehurst.wiremock.admin.model.PathParams;
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.core.Admin;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
-import java.util.Collection;
 import java.util.UUID;
 
 public class JsExtendGetExtensionTask implements AdminTask {
