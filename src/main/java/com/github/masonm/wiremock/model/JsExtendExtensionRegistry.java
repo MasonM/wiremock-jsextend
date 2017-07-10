@@ -1,4 +1,4 @@
-package com.github.masonm.wiremock;
+package com.github.masonm.wiremock.model;
 
 import com.github.tomakehurst.wiremock.extension.Extension;
 

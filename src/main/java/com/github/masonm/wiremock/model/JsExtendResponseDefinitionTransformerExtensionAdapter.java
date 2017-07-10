@@ -1,5 +1,7 @@
-package com.github.masonm.wiremock;
+package com.github.masonm.wiremock.model;
 
+import com.github.masonm.wiremock.model.JsExtendExtensionRegistry;
+import com.github.masonm.wiremock.model.JsExtendUserExtension;
 import com.github.tomakehurst.wiremock.common.FileSource;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;

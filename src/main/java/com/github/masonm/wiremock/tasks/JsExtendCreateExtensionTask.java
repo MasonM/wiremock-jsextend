@@ -1,5 +1,8 @@
-package com.github.masonm.wiremock;
+package com.github.masonm.wiremock.tasks;
 
+import com.github.masonm.wiremock.model.JsExtendCreateExtensionSpec;
+import com.github.masonm.wiremock.model.JsExtendExtensionRegistry;
+import com.github.masonm.wiremock.model.JsExtendUserExtension;
 import com.github.tomakehurst.wiremock.admin.AdminTask;
 import com.github.tomakehurst.wiremock.admin.model.PathParams;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;

@@ -1,5 +1,7 @@
-package com.github.masonm.wiremock;
+package com.github.masonm.wiremock.model;
 
+import com.github.masonm.wiremock.model.JsExtendExtensionRegistry;
+import com.github.masonm.wiremock.model.JsExtendUserExtension;
 import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
@@ -7,7 +9,6 @@ import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension;
 
 import javax.script.ScriptException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;

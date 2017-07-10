@@ -1,5 +1,8 @@
 package com.github.masonm.wiremock;
 
+import com.github.masonm.wiremock.tasks.JsExtendCreateExtensionTask;
+import com.github.masonm.wiremock.tasks.JsExtendGetAllExtensionsTask;
+import com.github.masonm.wiremock.tasks.JsExtendResetExtensionsTask;
 import com.github.tomakehurst.wiremock.admin.Router;
 import com.github.tomakehurst.wiremock.extension.AdminApiExtension;
 

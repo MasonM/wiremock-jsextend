@@ -1,5 +1,8 @@
 package com.github.masonm.wiremock;
 
+import com.github.masonm.wiremock.model.JsExtendRequestMatcherExtensionAdapter;
+import com.github.masonm.wiremock.model.JsExtendResponseDefinitionTransformerExtensionAdapter;
+import com.github.masonm.wiremock.model.JsExtendResponseTransformerExtensionAdapter;
 import com.github.tomakehurst.wiremock.standalone.WireMockServerRunner;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
