@@ -1,4 +1,4 @@
-package com.github.masonm.wiremock;
+package com.github.masonm.wiremock.extension;
 
 import com.github.masonm.wiremock.tasks.*;
 import com.github.tomakehurst.wiremock.admin.Router;

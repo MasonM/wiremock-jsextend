@@ -1,6 +1,5 @@
 package com.github.masonm.wiremock.model;
 
-import com.github.masonm.wiremock.JsExtendApiExtension;
 import com.github.tomakehurst.wiremock.extension.Extension;
 
 import java.util.*;

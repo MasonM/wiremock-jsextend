@@ -1,4 +1,4 @@
-package com.github.masonm.wiremock.model;
+package com.github.masonm.wiremock.extension;
 
 import com.github.masonm.wiremock.model.JsExtendExtensionRegistry;
 import com.github.masonm.wiremock.model.JsExtendUserExtension;
