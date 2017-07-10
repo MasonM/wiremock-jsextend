@@ -13,14 +13,21 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
 import javax.script.ScriptException;
+import java.util.UUID;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
-import static java.net.HttpURLConnection.HTTP_OK;
 
-public class JsExtendCreateExtensionTask implements AdminTask {
+public class JsExtendEditExtensionTask implements AdminTask {
     @Override
     public ResponseDefinition execute(Admin admin, Request request, PathParams pathParams) {
+        String idString = pathParams.get("id");
+        UUID id = UUID.fromString(idString);
+        if (JsExtendExtensionRegistry.getInstance().getExtension(id) == null) {
+            return ResponseDefinition.notFound();
+        }
+
         JsExtendExtensionSpec spec = Json.read(request.getBodyAsString(), JsExtendExtensionSpec.class);
+        spec.setId(id);
 
         JsExtendUserExtension extension;
         try {
@@ -31,6 +38,6 @@ public class JsExtendCreateExtensionTask implements AdminTask {
 
         JsExtendExtensionRegistry.getInstance().addExtension(extension);
 
-        return ResponseDefinitionBuilder.jsonResponse(extension, HTTP_OK);
+        return ResponseDefinition.okForJson(extension);
     }
 }

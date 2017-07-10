@@ -12,11 +12,15 @@ public class JsExtendUserExtension {
     private final Invocable invocable;
     private final UUID id;
 
-    public JsExtendUserExtension(Class<? extends Extension> type, String javascript, Invocable invocable) {
+    public JsExtendUserExtension(Class<? extends Extension> type, String javascript, Invocable invocable, UUID id) {
         this.type = type;
         this.javascript = javascript;
         this.invocable = invocable;
-        this.id = UUID.randomUUID();
+        this.id = id;
+    }
+
+    public JsExtendUserExtension(Class<? extends Extension> type, String javascript, Invocable invocable) {
+        this(type, javascript, invocable, UUID.randomUUID());
     }
 
     public Class getType() {
