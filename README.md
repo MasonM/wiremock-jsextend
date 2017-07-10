@@ -27,7 +27,7 @@ TRANSFORMED!
 * This extension allows arbitrary code execution. **Do not use this unless you fully understand the security implications.**
 * Only response definition transformers, response transformers, and custom request matchers are supported.
 * Due to limitations in Wiremock, transformer extensions are always global. Transformer parameters can be used as a workaround.
-* Due to limitations in Wiremock, you cannot name request matcher extensions. See the []Request Matching](#request-matching) section below.
+* Due to limitations in Wiremock, you cannot name request matcher extensions. See the [Request Matching](#request-matching) section below.
 * No load testing has been done yet, so I have no idea how well this will work with a large number of requests.
 
 # Building
@@ -86,19 +86,19 @@ Extensions must consist of a single Javascript function with a prototype matchin
 * [ResponseTransformer](https://github.com/tomakehurst/wiremock/blob/42a18081701390b034a7ceb1a5281a2858afa68b/src/main/java/com/github/tomakehurst/wiremock/extension/ResponseTransformer.java#L25). Example:
     ```javascript
     function transform(request, response, files, parameters) {
-        return Response.Builder.like(response).but().body(\"TRANSFORMED!\").build();
+        return Response.Builder.like(response).but().body("TRANSFORMED!").build();
     }
     ```
 * [ResponseDefinitionTransformer](https://github.com/tomakehurst/wiremock/blob/42a18081701390b034a7ceb1a5281a2858afa68b/src/main/java/com/github/tomakehurst/wiremock/extension/ResponseTransformer.java#L25). Example:
     ```javascript
     function transform(request, responseDefinition, files, parameters) {
-            return new ResponseDefinition(201, \"TRANSFORMED!\");
+            return new ResponseDefinition(201, "TRANSFORMED!");
     }
     ```
 * [RequestMatcherExtension](https://github.com/tomakehurst/wiremock/blob/42a18081701390b034a7ceb1a5281a2858afa68b/src/main/java/com/github/tomakehurst/wiremock/matching/RequestMatcherExtension.java#L32). Example:
     ```javascript
     function match(request, parameters) {
-        var queryParam = parameters.getString(\"queryParam\");
+        var queryParam = parameters.getString("queryParam");
         return MatchResult.of(request.queryParameter(queryParam).isPresent());
     }
     ```
