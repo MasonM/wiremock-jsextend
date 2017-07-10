@@ -23,14 +23,14 @@ echo -e "\tCreate test stub mapping"
 curl -s -d '{ "request": { "method": "ANY" }, "response": { "body": "Hello" } }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate transformer:"
-addExtension 'ResponseDefinitionTransformer' 'function transform(request, responseDefinition, files, pathParams) {
+addExtension 'ResponseDefinitionTransformer' 'function transform(request, responseDefinition) {
         return new ResponseDefinition(201, \"TRANSFORMED!\");
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
 
 echo -e "\n\n\tCreate another transformer:"
-addExtension 'ResponseDefinitionTransformer' 'function transform(request, responseDefinition, files, pathParams) {
+addExtension 'ResponseDefinitionTransformer' 'function transform(request, responseDefinition) {
         return new ResponseDefinition(201, responseDefinition.getBody() + \" AGAIN!\");
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
@@ -45,14 +45,14 @@ echo -e "\tCreate test stub mapping"
 curl -s -d '{ "request": { "method": "ANY" }, "response": { "body": "Hello" } }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate transformer:"
-addExtension 'ResponseTransformer' 'function transform(request, response, files, pathParams) {
+addExtension 'ResponseTransformer' 'function transform(request, response) {
         return Response.Builder.like(response).but().body(\"TRANSFORMED!\").build();
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
 
 echo -e "\n\n\tCreate another transformer:"
-addExtension 'ResponseTransformer' 'function transform(request, response, files, pathParams) {
+addExtension 'ResponseTransformer' 'function transform(request, response) {
         return Response.Builder.like(response).but().body(\"TRANSFORMED AGAIN!\").build();
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"

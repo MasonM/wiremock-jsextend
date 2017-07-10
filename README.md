@@ -4,20 +4,16 @@ wiremock-jsextend is a "meta-extension" for [WireMock](http://wiremock.org) that
 
 ```sh
 # Stub mapping for testing
-$ curl -s -d '{ "request": { "url": "/test" }, "response": { "body": "Hello" } }' http://localhost:8080/__admin/mappings > /dev/null
-
+$ curl -s -d '{
+    "request": { "url": "/test" },
+    "response": { "body": "TESTING" }
+}' http://localhost:8080/__admin/mappings > /dev/null
 
 # Create response transformer
 $ curl -s -d '{
     "type": "ResponseTransformer",
-    "javascript": "function transform(request, response, files, pathParams) { return Response.Builder.like(response).but().body(\"TRANSFORMED!\").build(); }"
-}' http://localhost:8080/__admin/extensions
-
-{
-  "type" : "com.github.tomakehurst.wiremock.extension.ResponseTransformer",
-  "javascript" : "function transform(request, response, files, pathParams) { return Response.Builder.like(response).but().body(\"TRANSFORMED!\").build(); }",
-  "id" : "5041bc37-ddda-4881-ad11-424b33505d65"
-}
+    "javascript": "function transform(request, response) { return Response.Builder.like(response).but().body(\"TRANSFORMED!\").build(); }"
+}' http://localhost:8080/__admin/extensions > /dev/null
 
 # Test transformer
 $ curl -s http://localhost:8080/test
@@ -28,7 +24,7 @@ TRANSFORMED!
 
 * This extension allows arbitrary code execution. **Do not enable unless you fully understand the security implications.**
 * Only response definition transformers, response transformers, and custom request matchers are supported.
-* Due to limitations in Wiremock, response definition transformer extensions and response transformer extensions are always global. Transformer parameters can be used as a workaround.
+* Due to limitations in Wiremock, transformer extensions are always global. Transformer parameters can be used as a workaround.
 * Due to limitations in Wiremock, you cannot give a unique name for request matcher extensions. Matcher extensions are used by passing "jsextend-requestmatch" as the name, which will match the request against each extension. The match results are then aggregated and returned. As with transformer extensions, a parameter can be used as a workaround.
 * No load testing has been done yet, so I have no idea how well this will work with a large number of requests.
 
