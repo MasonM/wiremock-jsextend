@@ -18,6 +18,12 @@ import java.util.UUID;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
 public class JsExtendEditExtensionTask implements AdminTask {
+    private final JsExtendUserExtensionFactory extensionFactory;
+
+    public JsExtendEditExtensionTask(JsExtendUserExtensionFactory extensionFactory) {
+        this.extensionFactory = extensionFactory;
+    }
+
     @Override
     public ResponseDefinition execute(Admin admin, Request request, PathParams pathParams) {
         String idString = pathParams.get("id");
@@ -31,7 +37,7 @@ public class JsExtendEditExtensionTask implements AdminTask {
 
         JsExtendUserExtension extension;
         try {
-            extension = new JsExtendUserExtensionFactory(spec).createNew();
+            extension = extensionFactory.createNew(spec);
         } catch (ScriptException ex) {
             return ResponseDefinitionBuilder.jsonResponse("Error: " + ex.getMessage(), HTTP_BAD_REQUEST);
         }

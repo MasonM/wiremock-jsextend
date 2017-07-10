@@ -20,11 +20,11 @@ echo "Testing with ResponseDefinitionTransformer"
 reset
 
 echo -e "\tCreate test stub mapping"
-curl -s -d '{ "request": { "method": "ANY" }, "response": { "body": "Hello" } }' http://localhost:8080/__admin/mappings > /dev/null
+curl -s -d '{ "request": { "method": "ANY" }, "response": { "body": "FOO " } }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate transformer:"
 addExtension 'ResponseDefinitionTransformer' 'function transform(request, responseDefinition) {
-        return new ResponseDefinition(201, \"TRANSFORMED!\");
+        return new ResponseDefinition(201, responseDefinition.getBody() + \"TRANSFORMED!\");
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest

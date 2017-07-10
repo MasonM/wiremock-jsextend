@@ -18,13 +18,19 @@ import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 public class JsExtendCreateExtensionTask implements AdminTask {
+    private final JsExtendUserExtensionFactory extensionFactory;
+
+    public JsExtendCreateExtensionTask(JsExtendUserExtensionFactory extensionFactory) {
+        this.extensionFactory = extensionFactory;
+    }
+
     @Override
     public ResponseDefinition execute(Admin admin, Request request, PathParams pathParams) {
         JsExtendExtensionSpec spec = Json.read(request.getBodyAsString(), JsExtendExtensionSpec.class);
 
         JsExtendUserExtension extension;
         try {
-            extension = new JsExtendUserExtensionFactory(spec).createNew();
+            extension = extensionFactory.createNew(spec);
         } catch (ScriptException ex) {
             return ResponseDefinitionBuilder.jsonResponse("Error: " + ex.getMessage(), HTTP_BAD_REQUEST);
         }

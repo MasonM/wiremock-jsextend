@@ -17,13 +17,10 @@ import javax.script.ScriptException;
 import java.util.List;
 
 public class JsExtendUserExtensionFactory {
-    private final JsExtendExtensionSpec spec;
+    // Cache ScriptEngineManager for performance
+    private ScriptEngineManager scriptEngineManager = null;
 
-    public JsExtendUserExtensionFactory(JsExtendExtensionSpec spec) {
-        this.spec = spec;
-    }
-
-    public JsExtendUserExtension createNew() throws ScriptException {
+    public JsExtendUserExtension createNew(JsExtendExtensionSpec spec) throws ScriptException {
         Class<? extends Extension> type = getExtensionClassForType(spec.getType());
 
         ScriptEngine engine = getScriptEngine();
@@ -37,16 +34,16 @@ public class JsExtendUserExtensionFactory {
     }
 
     private ScriptEngine getScriptEngine() throws ScriptException {
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("nashorn");
+        if (this.scriptEngineManager == null) {
+            this.scriptEngineManager = new ScriptEngineManager();
+        }
+        ScriptEngine engine = this.scriptEngineManager.getEngineByName("nashorn");
         if (engine == null) {
             //java 7 fallback
-            engine = manager.getEngineByName("JavaScript");
+            engine = this.scriptEngineManager.getEngineByName("JavaScript");
         } else {
             final List<Class<?>> globalImports = Lists.newArrayList(
                 RequestMatcherExtension.class,
-                ResponseTransformer.class,
-                ResponseDefinitionTransformer.class,
                 ResponseDefinition.class,
                 ResponseDefinitionBuilder.class,
                 Response.class,
