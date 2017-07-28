@@ -14,6 +14,7 @@ import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
 import javax.script.ScriptException;
 
+import static com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder.jsonResponse;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_OK;
 
@@ -32,11 +33,11 @@ public class JsExtendCreateExtensionTask implements AdminTask {
         try {
             extension = extensionFactory.createNew(spec);
         } catch (ScriptException ex) {
-            return ResponseDefinitionBuilder.jsonResponse("Error: " + ex.getMessage(), HTTP_BAD_REQUEST);
+            return jsonResponse("Error: " + ex.getMessage(), HTTP_BAD_REQUEST);
         }
 
         JsExtendExtensionRegistry.getInstance().addExtension(extension);
 
-        return ResponseDefinitionBuilder.jsonResponse(extension, HTTP_OK);
+        return jsonResponse(extension, HTTP_OK);
     }
 }

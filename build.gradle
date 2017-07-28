@@ -117,7 +117,7 @@ test {
 
 dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
-    compile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.6.0'
+    compile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.7.0'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
     compile group: 'com.google.guava', name: 'guava', version: '18.0'
 

@@ -8,7 +8,7 @@ import java.util.UUID;
 public class JsExtendExtensionSpec {
     private final String type;
     private final String javascript;
-    private UUID id;
+    private UUID id = null;
 
     @JsonCreator
     public JsExtendExtensionSpec(
@@ -17,12 +17,15 @@ public class JsExtendExtensionSpec {
     ) {
         this.type = type;
         this.javascript = javascript;
-        this.id = null;
     }
 
-    public String getType() { return type; }
+    public String getType() {
+        return type;
+    }
 
-    public String getJavascript() { return javascript; }
+    public String getJavascript() {
+        return javascript;
+    }
 
     public void setId(UUID id) {
         this.id = id;

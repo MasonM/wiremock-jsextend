@@ -1,9 +1,6 @@
 package com.github.masonm.wiremock;
 
-import com.github.masonm.wiremock.extension.JsExtendApiExtension;
-import com.github.masonm.wiremock.extension.JsExtendRequestMatcherExtensionAdapter;
-import com.github.masonm.wiremock.extension.JsExtendResponseDefinitionTransformerExtensionAdapter;
-import com.github.masonm.wiremock.extension.JsExtendResponseTransformerExtensionAdapter;
+import com.github.masonm.wiremock.extension.*;
 import com.github.tomakehurst.wiremock.standalone.WireMockServerRunner;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +20,8 @@ public class JsExtendStandalone {
             JsExtendApiExtension.class.getName(),
             JsExtendRequestMatcherExtensionAdapter.class.getName(),
             JsExtendResponseDefinitionTransformerExtensionAdapter.class.getName(),
-            JsExtendResponseTransformerExtensionAdapter.class.getName()
+            JsExtendResponseTransformerExtensionAdapter.class.getName(),
+            JsExtendStubMappingTransformerExtensionAdapter.class.getName()
         };
     }
 }

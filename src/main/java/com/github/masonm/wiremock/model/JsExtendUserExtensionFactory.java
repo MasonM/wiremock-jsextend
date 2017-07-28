@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.extension.StubMappingTransformer;
 import com.github.tomakehurst.wiremock.http.Response;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
@@ -65,6 +66,8 @@ public class JsExtendUserExtensionFactory {
                 return ResponseTransformer.class;
             case "ResponseDefinitionTransformer":
                 return ResponseDefinitionTransformer.class;
+            case "StubMappingTransformer":
+                return StubMappingTransformer.class;
             default:
                 throw new IllegalArgumentException("Invalid type: " + type);
         }
