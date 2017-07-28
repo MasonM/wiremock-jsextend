@@ -9,6 +9,9 @@ import com.github.tomakehurst.wiremock.http.Response;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
 import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension;
+import com.github.tomakehurst.wiremock.matching.RequestPattern;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.google.common.collect.Lists;
 
 import javax.script.Invocable;
@@ -44,11 +47,14 @@ public class JsExtendUserExtensionFactory {
             engine = this.scriptEngineManager.getEngineByName("JavaScript");
         } else {
             final List<Class<?>> globalImports = Lists.newArrayList(
+                MatchResult.class,
                 RequestMatcherExtension.class,
+                RequestPattern.class,
+                RequestPatternBuilder.class,
                 ResponseDefinition.class,
                 ResponseDefinitionBuilder.class,
                 Response.class,
-                MatchResult.class
+                StubMapping.class
             );
             for (Class importClass : globalImports) {
                 engine.eval("var " + importClass.getSimpleName() + " = Java.type('" + importClass.getName() + "');");
