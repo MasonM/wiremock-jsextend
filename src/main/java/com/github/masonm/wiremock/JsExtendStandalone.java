@@ -20,10 +20,10 @@ public final class JsExtendStandalone {
     private static String[] extensionClasses() {
         return new String[] {
             JsExtendApiExtension.class.getName(),
-            JsExtendRequestMatcherExtensionAdapter.class.getName(),
-            JsExtendResponseDefinitionTransformerExtensionAdapter.class.getName(),
-            JsExtendResponseTransformerExtensionAdapter.class.getName(),
-            JsExtendStubMappingTransformerExtensionAdapter.class.getName()
+            CompositeRequestMatcherExtension.class.getName(),
+            CompositeResponseDefinitionTransformer.class.getName(),
+            CompositeResponseTransformer.class.getName(),
+            CompositeStubMappingTransformer.class.getName()
         };
     }
 }

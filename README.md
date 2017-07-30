@@ -9,17 +9,24 @@ $ curl -s -d '{
     "response": { "body": "TESTING" }
 }' http://localhost:8080/__admin/mappings > /dev/null
 
+# Test mapping
+$ curl -s http://localhost:8080/test
+TESTING
+
 # Create response transformer
-$ curl -s -d '{
-    "type": "ResponseTransformer",
-    "javascript": "function transform(request, response) {'\
-'       return Response.Builder.like(response).but().body(\"TRANSFORMED!\").build();'\
-'   }"
-}' http://localhost:8080/__admin/extensions > /dev/null
+$ curl -s -d '
+    function transform(request, response) {
+        return Response.Builder
+            .like(response)
+            .but()
+            .body(response.getBodyAsString() + ", and transformed!")
+            .build();
+   }
+}' http://localhost:8080/__admin/extensions/ResponseTransformer/bodyAppendTest > /dev/null
 
 # Test transformer
 $ curl -s http://localhost:8080/test
-TRANSFORMED!
+TESTING, and transformed!
 ```
 
 # Caveats/Limitations
@@ -47,7 +54,7 @@ With WireMock standalone JAR:
 java \
         -cp wiremock-standalone.jar:build/libs/wiremock-snapshot-0.3a.jar \
         com.github.tomakehurst.wiremock.standalone.WireMockServerRunner \
-        --extensions="com.github.masonm.wiremock.extension.JsExtendApiExtension,com.github.masonm.wiremock.extension.JsExtendRequestMatcherExtensionAdapter,com.github.masonm.wiremock.extension.JsExtendResponseDefinitionTransformerExtensionAdapter,com.github.masonm.wiremock.extension.JsExtendResponseTransformerExtensionAdapter,com.github.masonm.wiremock.extension.JsExtendStubMappingTransformerExtension"
+        --extensions="com.github.masonm.wiremock.extension.JsExtendApiExtension,com.github.masonm.wiremock.extension.CompositeRequestMatcherExtension,com.github.masonm.wiremock.extension.CompositeResponseDefinitionTransformer,com.github.masonm.wiremock.extension.CompositeResponseTransformer,com.github.masonm.wiremock.extension.JsExtendStubMappingTransformerExtension"
 ```
 
 Programmatically in Java:
@@ -55,10 +62,10 @@ Programmatically in Java:
 new WireMockServer(
     wireMockConfig().extensions(
         "com.github.masonm.wiremock.extension.JsExtendApiExtension",
-        "com.github.masonm.wiremock.extension.JsExtendRequestMatcherExtensionAdapter",
-        "com.github.masonm.wiremock.extension.JsExtendResponseDefinitionTransformerExtensionAdapter",
-        "com.github.masonm.wiremock.extension.JsExtendResponseTransformerExtensionAdapter",
-        "com.github.masonm.wiremock.extension.JsExtendStubMappingTransformerExtensionAdapter"
+        "com.github.masonm.wiremock.extension.CompositeRequestMatcherExtension",
+        "com.github.masonm.wiremock.extension.CompositeResponseDefinitionTransformer",
+        "com.github.masonm.wiremock.extension.CompositeResponseTransformer",
+        "com.github.masonm.wiremock.extension.CompositeStubMappingTransformer"
     )
 )
 ```
@@ -67,19 +74,12 @@ new WireMockServer(
 
 ## API Endpoints
 
-The extension adds the following admin API endpoints:
-* `POST /__admin/extensions` - Create new extension defined by a JSON object and returns registered extension with ID. The POSTed JSON must be in the form:
-```json
-{
-  "type": "ResponseTransformer|ResponseDefinitionTransformer|RequestMatcherExtension|StubMappingTransformer",
-  "javascript": "function transform(..) OR function match(...)"
-}
-```
-* `GET /__admin/extensions` - Returns array of registered extensions. Example:
-* `DELETE /__admin/extensions` - Deletes all registered extensions.
-* `GET /__admin/extensions/{id}` - Retrieves extension given by the ID. Example:
-* `DELETE /__admin/extensions/{id}` - Delete extension with the given ID.
-* `PUT /__admin/extensions/{id}` - Replace extension with the given ID by the supplied JSON object.
+The extension adds the following admin API endpoints. The URL parameter `{type}` should be one of `ResponseTransformer`, `ResponseDefinitionTransformer`, `RequestMatcherExtension`, or `StubMappingTransformer`.
+* `PUT /__admin/extensions/{type}/{name}` - Create new extension with type `{type}` and name `{name}`. The request body should be the Javascript source for the transformer or matcher function.
+* `GET /__admin/extensions/{type}/{name}` - Retrieves extension of type `{type}` and name `{name}`.
+* `DELETE /__admin/extensions/{id}/{name}` - Deletes extension of type `{type}` and name `{name}`.
+* `GET /__admin/extensions/{type}` - Returns array of all registered extensions of type `{type}`.
+* `DELETE /__admin/extensions/{type}` - Deletes all registered extensions of the type `{type}`.
 
 ## Javascript API
 
@@ -120,24 +120,23 @@ If you're using Java 8, then `RequestMatcherExtension`, `ResponseDefinition`, `R
 
 ## Request Matching
 
-Due to Wiremock limitations, it's not possible to specify the name for a new request matcher. To use a request matcher, pass `"jsextend-requestmatch"` as the name, along with any parameters you want to use. This will cause wiremock-jsextend to match the request against every matcher you've registered, in the order they were registered. The results are  aggregated using `MatchResult.aggregate()` and returned. You can use a parameter to ensure only one of your matchers if used, e.g.:
+Due to Wiremock limitations, it's not possible to specify the name for a new request matcher. To use a request matcher, pass `"composite-request-matcher-extension"` as the name, along with any parameters you want to use. This will cause `wiremock-jsextend` to match the request against every matcher you've registered, in the order they were registered. The results are  aggregated using `MatchResult.aggregate()` and returned. You can use a parameter to ensure only one of your matchers if used, e.g.:
 ```sh
 # Define request matcher that returns MatchResult.exactMatch() unless the parameter "urlHasFoo" is present
 $ curl -s -d '{
-    "type": "RequestMatcherExtension",
-    "javascript": "function match(request, parameters) {'\
-'        if (!parameters || !parameters.containsKey(\"urlHasFoo\")) {'\
-'            return MatchResult.exactMatch();'\
-'        }'\
-'        return MatchResult.of(request.getUrl().indexOf(\"foo\") != -1);'\
-'    }"
-}' http://localhost:8080/__admin/extensions > /dev/null
+    function match(request, parameters) {
+        if (!parameters || !parameters.containsKey("urlHasFoo")) {
+            return MatchResult.exactMatch();
+        }
+        return MatchResult.of(request.getUrl().indexOf("foo") != -1);
+    }
+' http://localhost:8080/__admin/extensions/RequestMatcherExtension/hasFoo > /dev/null
 
 # Define test stub mapping that passes the "urlHasFoo" parameter
 $ curl -s -d '{
     "request": {
         "customMatcher": {
-            "name": "jsextend-requestmatch",
+            "name": "composite-request-matcher-extension",
             "parameters": {
                 "urlHasFoo": true
             }

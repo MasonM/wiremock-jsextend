@@ -1,13 +1,10 @@
 package com.github.masonm.wiremock.model;
 
+import com.github.masonm.wiremock.extension.*;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.ContentTypes;
 import com.github.tomakehurst.wiremock.common.Urls;
-import com.github.tomakehurst.wiremock.extension.Extension;
-import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
-import com.github.tomakehurst.wiremock.extension.StubMappingTransformer;
 import com.github.tomakehurst.wiremock.http.Response;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.*;
@@ -21,20 +18,26 @@ import javax.script.ScriptException;
 import java.net.URI;
 import java.util.List;
 
-public class JsExtendUserExtensionFactory {
+public class JsExtensionFactory {
     // Cache ScriptEngineManager for performance
     private ScriptEngineManager scriptEngineManager = null;
 
-    public JsExtendUserExtension createNew(JsExtendExtensionSpec spec) throws ScriptException {
-        Class<? extends Extension> type = getExtensionClassForType(spec.getType());
+    public JsExtension createNew(String name, String type, String javascript) throws ScriptException {
+        final ScriptEngine engine = getScriptEngine();
+        engine.eval(javascript);
+        final JsExtensionSpec spec = new JsExtensionSpec(name, javascript, (Invocable) engine);
 
-        ScriptEngine engine = getScriptEngine();
-        engine.eval(spec.getJavascript());
-
-        if (spec.getId() != null) {
-            return new JsExtendUserExtension(type, spec.getJavascript(), (Invocable) engine, spec.getId());
-        } else {
-            return new JsExtendUserExtension(type, spec.getJavascript(), (Invocable) engine);
+        switch(type) {
+            case "RequestMatcherExtension":
+                return new JsRequestMatcherExtension(spec);
+            case "ResponseTransformer":
+                return new JsResponseTransformer(spec);
+            case "ResponseDefinitionTransformer":
+                return new JsResponseDefinitionTransformer(spec);
+            case "StubMappingTransformer":
+                return new JsStubMappingTransformer(spec);
+            default:
+                throw new IllegalArgumentException("Invalid type: " + type);
         }
     }
 
@@ -69,20 +72,5 @@ public class JsExtendUserExtensionFactory {
         }
 
         return engine;
-    }
-
-    private Class<? extends Extension> getExtensionClassForType(String type) {
-        switch(type) {
-            case "RequestMatcherExtension":
-                return RequestMatcherExtension.class;
-            case "ResponseTransformer":
-                return ResponseTransformer.class;
-            case "ResponseDefinitionTransformer":
-                return ResponseDefinitionTransformer.class;
-            case "StubMappingTransformer":
-                return StubMappingTransformer.class;
-            default:
-                throw new IllegalArgumentException("Invalid type: " + type);
-        }
     }
 }

@@ -8,8 +8,8 @@ reset() {
 }
 
 addExtension() {
-        JSON="{ \"type\": \"${1}\", \"javascript\": \"${2//$'\n'/'\n'}\" }"
-        curl -s -d "${JSON}" http://localhost:8080/__admin/extensions | sed "s/^/\t/"
+        curl -s -X PUT -d "${3}" http://localhost:8080/__admin/extensions/$1/$2
+        echo "${3}" | sed "s/^/\t\t/"
 }
 
 testRequest() {
@@ -23,15 +23,15 @@ echo -e "\tCreate test stub mapping"
 curl -s -d '{ "request": { "method": "ANY" }, "response": { "body": "FOO " } }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate transformer:"
-addExtension 'ResponseDefinitionTransformer' 'function transform(request, responseDefinition) {
-        return new ResponseDefinition(201, responseDefinition.getBody() + \"TRANSFORMED!\");
+addExtension 'ResponseDefinitionTransformer' 'transformer' 'function transform(request, responseDefinition) {
+        return new ResponseDefinition(201, responseDefinition.getBody() + "TRANSFORMED!");
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
 
 echo -e "\n\n\tCreate another transformer:"
-addExtension 'ResponseDefinitionTransformer' 'function transform(request, responseDefinition) {
-        return new ResponseDefinition(201, responseDefinition.getBody() + \" AGAIN!\");
+addExtension 'ResponseDefinitionTransformer' 'transformer2' 'function transform(request, responseDefinition) {
+        return new ResponseDefinition(201, responseDefinition.getBody() + " AGAIN!");
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
@@ -45,15 +45,15 @@ echo -e "\tCreate test stub mapping"
 curl -s -d '{ "request": { "method": "ANY" }, "response": { "body": "Hello" } }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate transformer:"
-addExtension 'ResponseTransformer' 'function transform(request, response) {
-        return Response.Builder.like(response).but().body(\"TRANSFORMED!\").build();
+addExtension 'ResponseTransformer' 'transformer' 'function transform(request, response) {
+        return Response.Builder.like(response).but().body("TRANSFORMED!").build();
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
 
 echo -e "\n\n\tCreate another transformer:"
-addExtension 'ResponseTransformer' 'function transform(request, response) {
-        return Response.Builder.like(response).but().body(\"TRANSFORMED AGAIN!\").build();
+addExtension 'ResponseTransformer' 'transformer2' 'function transform(request, response) {
+        return Response.Builder.like(response).but().body("TRANSFORMED AGAIN!").build();
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
@@ -67,7 +67,7 @@ echo -e "\tCreate test stub mapping"
 curl -s -d '{
         "request": {
                 "customMatcher": {
-                        "name": "jsextend-requestmatch",
+                        "name": "composite-request-matcher-extension",
                         "parameters": {
                                 "queryParam": "MATCH_PARAM"
                         }
@@ -79,8 +79,8 @@ curl -s -d '{
 }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate matcher:"
-addExtension 'RequestMatcherExtension' 'function match(request, parameters) {
-        var queryParam = parameters.getString(\"queryParam\");
+addExtension 'RequestMatcherExtension' 'matcher' 'function match(request, parameters) {
+        var queryParam = parameters.getString("queryParam");
         return MatchResult.of(request.queryParameter(queryParam).isPresent());
 }'
 echo -e "\n\n\tIssuing matching request:"
