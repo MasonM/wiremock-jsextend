@@ -8,12 +8,11 @@ import java.util.*;
 // Once it is, this class will be removed and replaced with calls to admin.getOptions().getExtensionsOfType()
 public class JsExtendExtensionRegistry {
     private final Map<UUID, JsExtendUserExtension> extensions = new LinkedHashMap<>();
-    private static JsExtendExtensionRegistry instance = null;
+    private static final JsExtendExtensionRegistry instance = new JsExtendExtensionRegistry();
+
+    private JsExtendExtensionRegistry() {}
 
     public static JsExtendExtensionRegistry getInstance() {
-        if (instance == null) {
-            instance = new JsExtendExtensionRegistry();
-        }
         return instance;
     }
 

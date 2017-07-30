@@ -6,7 +6,6 @@ import com.github.masonm.wiremock.model.JsExtendUserExtension;
 import com.github.masonm.wiremock.model.JsExtendUserExtensionFactory;
 import com.github.tomakehurst.wiremock.admin.AdminTask;
 import com.github.tomakehurst.wiremock.admin.model.PathParams;
-import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.core.Admin;
 import com.github.tomakehurst.wiremock.http.Request;

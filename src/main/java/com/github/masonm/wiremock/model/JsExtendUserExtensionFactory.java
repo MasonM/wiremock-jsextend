@@ -1,16 +1,16 @@
 package com.github.masonm.wiremock.model;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.common.ContentTypes;
+import com.github.tomakehurst.wiremock.common.Urls;
 import com.github.tomakehurst.wiremock.extension.Extension;
 import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 import com.github.tomakehurst.wiremock.extension.StubMappingTransformer;
 import com.github.tomakehurst.wiremock.http.Response;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
-import com.github.tomakehurst.wiremock.matching.MatchResult;
-import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension;
-import com.github.tomakehurst.wiremock.matching.RequestPattern;
-import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
+import com.github.tomakehurst.wiremock.matching.*;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.google.common.collect.Lists;
 
@@ -18,6 +18,7 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.net.URI;
 import java.util.List;
 
 public class JsExtendUserExtensionFactory {
@@ -50,11 +51,17 @@ public class JsExtendUserExtensionFactory {
                 MatchResult.class,
                 RequestMatcherExtension.class,
                 RequestPattern.class,
+                RequestPatternUpdater.class,
                 RequestPatternBuilder.class,
                 ResponseDefinition.class,
                 ResponseDefinitionBuilder.class,
                 Response.class,
-                StubMapping.class
+                StubMapping.class,
+                WireMock.class,
+                Urls.class,
+                URI.class,
+                UrlPattern.class,
+                ContentTypes.class
             );
             for (Class importClass : globalImports) {
                 engine.eval("var " + importClass.getSimpleName() + " = Java.type('" + importClass.getName() + "');");

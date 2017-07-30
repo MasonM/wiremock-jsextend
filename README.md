@@ -25,7 +25,7 @@ TRANSFORMED!
 # Caveats/Limitations
 
 * This extension allows arbitrary code execution. **Do not use this unless you fully understand the security implications.**
-* Only response definition transformers, response transformers, and custom request matchers are supported.
+* `AdminApiExtension` and `PostServeAction` extensions are not supported.
 * Due to limitations in Wiremock, transformer extensions are always global. Transformer parameters can be used as a workaround.
 * Due to limitations in Wiremock, you cannot name request matcher extensions. See the [Request Matching](#request-matching) section below.
 * No load testing has been done yet, so I have no idea how well this will work with a large number of requests.
@@ -47,7 +47,7 @@ With WireMock standalone JAR:
 java \
         -cp wiremock-standalone.jar:build/libs/wiremock-snapshot-0.3a.jar \
         com.github.tomakehurst.wiremock.standalone.WireMockServerRunner \
-        --extensions="com.github.masonm.wiremock.extension.JsExtendApiExtension,com.github.masonm.wiremock.extension.JsExtendRequestMatcherExtensionAdapter,com.github.masonm.wiremock.extension.JsExtendResponseDefinitionTransformerExtensionAdapter,com.github.masonm.wiremock.extension.JsExtendResponseTransformerExtensionAdapter"
+        --extensions="com.github.masonm.wiremock.extension.JsExtendApiExtension,com.github.masonm.wiremock.extension.JsExtendRequestMatcherExtensionAdapter,com.github.masonm.wiremock.extension.JsExtendResponseDefinitionTransformerExtensionAdapter,com.github.masonm.wiremock.extension.JsExtendResponseTransformerExtensionAdapter,com.github.masonm.wiremock.extension.JsExtendStubMappingTransformerExtension"
 ```
 
 Programmatically in Java:
@@ -57,7 +57,8 @@ new WireMockServer(
         "com.github.masonm.wiremock.extension.JsExtendApiExtension",
         "com.github.masonm.wiremock.extension.JsExtendRequestMatcherExtensionAdapter",
         "com.github.masonm.wiremock.extension.JsExtendResponseDefinitionTransformerExtensionAdapter",
-        "com.github.masonm.wiremock.extension.JsExtendResponseTransformerExtensionAdapter"
+        "com.github.masonm.wiremock.extension.JsExtendResponseTransformerExtensionAdapter",
+        "com.github.masonm.wiremock.extension.JsExtendStubMappingTransformerExtensionAdapter"
     )
 )
 ```
@@ -70,7 +71,7 @@ The extension adds the following admin API endpoints:
 * `POST /__admin/extensions` - Create new extension defined by a JSON object and returns registered extension with ID. The POSTed JSON must be in the form:
 ```json
 {
-  "type": "ResponseTransformer|ResponseDefinitionTransformer|RequestMatcherExtension",
+  "type": "ResponseTransformer|ResponseDefinitionTransformer|RequestMatcherExtension|StubMappingTransformer",
   "javascript": "function transform(..) OR function match(...)"
 }
 ```
@@ -83,23 +84,35 @@ The extension adds the following admin API endpoints:
 ## Javascript API
 
 Extensions must consist of a single Javascript function with a prototype matching the corresponding Java class:
-* [ResponseTransformer](https://github.com/tomakehurst/wiremock/blob/42a18081701390b034a7ceb1a5281a2858afa68b/src/main/java/com/github/tomakehurst/wiremock/extension/ResponseTransformer.java#L25). Example:
+* [ResponseTransformer](https://github.com/tomakehurst/wiremock/blob/7610d003720e1b39c994f95dcd36b3e3e48b9b9b/src/main/java/com/github/tomakehurst/wiremock/extension/ResponseTransformer.java#L25). Example:
     ```javascript
     function transform(request, response, files, parameters) {
         return Response.Builder.like(response).but().body("TRANSFORMED!").build();
     }
     ```
-* [ResponseDefinitionTransformer](https://github.com/tomakehurst/wiremock/blob/42a18081701390b034a7ceb1a5281a2858afa68b/src/main/java/com/github/tomakehurst/wiremock/extension/ResponseTransformer.java#L25). Example:
+* [ResponseDefinitionTransformer](https://github.com/tomakehurst/wiremock/blob/7610d003720e1b39c994f95dcd36b3e3e48b9b9b/src/main/java/com/github/tomakehurst/wiremock/extension/ResponseTransformer.java#L25). Example:
     ```javascript
     function transform(request, responseDefinition, files, parameters) {
-            return new ResponseDefinition(201, "TRANSFORMED!");
+        return new ResponseDefinition(201, "TRANSFORMED!");
     }
     ```
-* [RequestMatcherExtension](https://github.com/tomakehurst/wiremock/blob/42a18081701390b034a7ceb1a5281a2858afa68b/src/main/java/com/github/tomakehurst/wiremock/matching/RequestMatcherExtension.java#L32). Example:
+* [RequestMatcherExtension](https://github.com/tomakehurst/wiremock/blob/7610d003720e1b39c994f95dcd36b3e3e48b9b9b/src/main/java/com/github/tomakehurst/wiremock/matching/RequestMatcherExtension.java#L32). Example:
     ```javascript
     function match(request, parameters) {
         var queryParam = parameters.getString("queryParam");
         return MatchResult.of(request.queryParameter(queryParam).isPresent());
+    }
+    ```
+    
+* [StubMappingTransformer](https://github.com/tomakehurst/wiremock/blob/42a18081701390b034a7ceb1a5281a2858afa68b/src/main/java/com/github/tomakehurst/wiremock/extension/StubMappingTransformer.java#L26). Example:
+    ```javascript
+    function transform(stubMapping) {
+        var newRequest = RequestPatternUpdater
+            .like(stubMapping.getRequest())
+            .withUrl("http://example.com")
+            .build();
+        stubMapping.setRequest(newRequest);
+        return stubMapping;
     }
     ```
 
