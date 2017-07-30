@@ -5,14 +5,14 @@ import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.StubMappingTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CompositeStubMappingTransformer
     extends StubMappingTransformer
     implements CompositeExtension<StubMappingTransformer> {
 
-    private final Map<String, StubMappingTransformer> extensions = new HashMap<>();
+    private static final Map<String, StubMappingTransformer> extensions = new ConcurrentHashMap<>();
 
     @Override
     public String getName() {

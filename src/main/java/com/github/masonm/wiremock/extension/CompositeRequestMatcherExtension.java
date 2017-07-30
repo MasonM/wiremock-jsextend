@@ -6,15 +6,15 @@ import com.github.tomakehurst.wiremock.matching.MatchResult;
 import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CompositeRequestMatcherExtension
     extends RequestMatcherExtension
     implements CompositeExtension<RequestMatcherExtension> {
 
-    private final Map<String, RequestMatcherExtension> extensions = new HashMap<>();
+    private static final Map<String, RequestMatcherExtension> extensions = new ConcurrentHashMap<>();
 
     @Override
     public String getName() {

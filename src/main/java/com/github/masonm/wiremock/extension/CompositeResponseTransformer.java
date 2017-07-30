@@ -6,14 +6,14 @@ import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CompositeResponseTransformer
     extends ResponseTransformer
     implements CompositeExtension<ResponseTransformer> {
 
-    private final Map<String, ResponseTransformer> extensions = new HashMap<>();
+    private static final Map<String, ResponseTransformer> extensions = new ConcurrentHashMap<>();
 
     @Override
     public String getName() {
