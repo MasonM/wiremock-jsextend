@@ -41,7 +41,6 @@ public class JsExtensionFactory {
                 MatchResult.class,
                 RequestMatcherExtension.class,
                 RequestPattern.class,
-                RequestPatternUpdater.class,
                 RequestPatternBuilder.class,
                 ResponseDefinition.class,
                 ResponseDefinitionBuilder.class,

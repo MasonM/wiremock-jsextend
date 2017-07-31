@@ -11,7 +11,7 @@ import java.util.Map;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 
-public class RequestPatternUpdater {
+public class RequestPatternBuilder {
 
     private UrlPattern url;
     private RequestMethod method;
@@ -22,10 +22,10 @@ public class RequestPatternUpdater {
     private BasicCredentials basicCredentials;
     private CustomMatcherDefinition customMatcherDefinition;
 
-    private RequestPatternUpdater() {}
+    private RequestPatternBuilder() {}
 
-    public static RequestPatternUpdater like(RequestPattern requestPattern) {
-        RequestPatternUpdater builder = new RequestPatternUpdater();
+    public static RequestPatternBuilder like(RequestPattern requestPattern) {
+        RequestPatternBuilder builder = new RequestPatternBuilder();
         builder.url = requestPattern.getUrlMatcher();
         builder.method = requestPattern.getMethod();
         builder.headers = requestPattern.getHeaders();
@@ -37,51 +37,51 @@ public class RequestPatternUpdater {
         return builder;
     }
 
-    public RequestPatternUpdater but() {
+    public RequestPatternBuilder but() {
         return this;
     }
 
-    public RequestPatternUpdater withUrl(String url) {
+    public RequestPatternBuilder withUrl(String url) {
         this.url = WireMock.urlEqualTo(url);
         return this;
     }
 
-    public RequestPatternUpdater withUrlPattern(UrlPattern url) {
+    public RequestPatternBuilder withUrlPattern(UrlPattern url) {
         this.url = url;
         return this;
     }
 
-    public RequestPatternUpdater withHeader(String key, StringValuePattern valuePattern) {
+    public RequestPatternBuilder withHeader(String key, StringValuePattern valuePattern) {
         headers.put(key, MultiValuePattern.of(valuePattern));
         return this;
     }
 
-    public RequestPatternUpdater withoutHeader(String key) {
+    public RequestPatternBuilder withoutHeader(String key) {
         headers.put(key, MultiValuePattern.absent());
         return this;
     }
 
-    public RequestPatternUpdater withQueryParam(String key, StringValuePattern valuePattern) {
+    public RequestPatternBuilder withQueryParam(String key, StringValuePattern valuePattern) {
         queryParams.put(key, MultiValuePattern.of(valuePattern));
         return this;
     }
 
-    public RequestPatternUpdater withQueryParams(Map<String, MultiValuePattern> queryParams) {
+    public RequestPatternBuilder withQueryParams(Map<String, MultiValuePattern> queryParams) {
         this.queryParams = queryParams;
         return this;
     }
 
-    public RequestPatternUpdater withCookie(String key, StringValuePattern valuePattern) {
+    public RequestPatternBuilder withCookie(String key, StringValuePattern valuePattern) {
         cookies.put(key, valuePattern);
         return this;
     }
 
-    public RequestPatternUpdater withBasicAuth(BasicCredentials basicCredentials) {
+    public RequestPatternBuilder withBasicAuth(BasicCredentials basicCredentials) {
         this.basicCredentials = basicCredentials;
         return this;
     }
 
-    public RequestPatternUpdater withRequestBody(StringValuePattern valuePattern) {
+    public RequestPatternBuilder withRequestBody(StringValuePattern valuePattern) {
         this.bodyPatterns.add(valuePattern);
         return this;
     }
