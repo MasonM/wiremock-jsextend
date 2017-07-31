@@ -28,11 +28,19 @@ public class RequestPatternBuilder {
         RequestPatternBuilder builder = new RequestPatternBuilder();
         builder.url = requestPattern.getUrlMatcher();
         builder.method = requestPattern.getMethod();
-        builder.headers = requestPattern.getHeaders();
-        builder.queryParams = requestPattern.getQueryParameters();
-        builder.cookies = requestPattern.getCookies();
+        if (requestPattern.getHeaders() != null) {
+            builder.headers = requestPattern.getHeaders();
+        }
+        if (requestPattern.getQueryParameters() != null) {
+            builder.queryParams = requestPattern.getQueryParameters();
+        }
+        if (requestPattern.getCookies() != null) {
+            builder.cookies = requestPattern.getCookies();
+        }
+        if (requestPattern.getBodyPatterns() != null) {
+            builder.bodyPatterns = requestPattern.getBodyPatterns();
+        }
         builder.basicCredentials = requestPattern.getBasicAuthCredentials();
-        builder.bodyPatterns = requestPattern.getBodyPatterns();
         builder.customMatcherDefinition = requestPattern.getCustomMatcher();
         return builder;
     }
@@ -92,11 +100,11 @@ public class RequestPatternBuilder {
                 new RequestPattern(
                     url,
                     method,
-                    headers.isEmpty() ? null : headers,
-                    queryParams.isEmpty() ? null : queryParams,
-                    cookies.isEmpty() ? null : cookies,
+                    (headers == null || headers.isEmpty()) ? null : headers,
+                    (queryParams == null || queryParams.isEmpty()) ? null : queryParams,
+                    (cookies == null || cookies.isEmpty()) ? null : cookies,
                     basicCredentials,
-                    bodyPatterns.isEmpty() ? null : bodyPatterns,
+                    (bodyPatterns == null || bodyPatterns.isEmpty()) ? null : bodyPatterns,
                     null
                 );
     }
