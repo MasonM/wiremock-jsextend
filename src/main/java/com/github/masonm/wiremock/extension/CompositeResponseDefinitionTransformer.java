@@ -7,13 +7,14 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CompositeResponseDefinitionTransformer
     extends ResponseDefinitionTransformer
     implements CompositeExtension<ResponseDefinitionTransformer> {
 
-    private static final Map<String, ResponseDefinitionTransformer> extensions = new ConcurrentHashMap<>();
+    private static final Map<UUID, ResponseDefinitionTransformer> extensions = new ConcurrentHashMap<>();
 
     @Override
     public String getName() {
@@ -21,7 +22,7 @@ public class CompositeResponseDefinitionTransformer
     }
 
     @Override
-    public Map<String, ResponseDefinitionTransformer> getExtensions() {
+    public Map<UUID, ResponseDefinitionTransformer> getExtensions() {
         return extensions;
     }
 

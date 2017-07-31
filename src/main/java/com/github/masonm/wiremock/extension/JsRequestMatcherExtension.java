@@ -1,5 +1,6 @@
 package com.github.masonm.wiremock.extension;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.github.masonm.wiremock.model.JsExtensionSpec;
 import com.github.tomakehurst.wiremock.extension.Parameters;
@@ -12,7 +13,6 @@ import javax.script.ScriptException;
 import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
 
 public class JsRequestMatcherExtension extends RequestMatcherExtension implements JsExtension {
-    @JsonUnwrapped
     private final JsExtensionSpec spec;
 
     public JsRequestMatcherExtension(JsExtensionSpec spec) {
@@ -22,11 +22,6 @@ public class JsRequestMatcherExtension extends RequestMatcherExtension implement
     @Override
     public JsExtensionSpec getSpec() {
         return spec;
-    }
-
-    @Override
-    public String getName() {
-        return spec.getName();
     }
 
     @Override

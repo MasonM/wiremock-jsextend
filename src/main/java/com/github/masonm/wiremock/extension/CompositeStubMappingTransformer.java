@@ -6,13 +6,14 @@ import com.github.tomakehurst.wiremock.extension.StubMappingTransformer;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CompositeStubMappingTransformer
     extends StubMappingTransformer
     implements CompositeExtension<StubMappingTransformer> {
 
-    private static final Map<String, StubMappingTransformer> extensions = new ConcurrentHashMap<>();
+    private static final Map<UUID, StubMappingTransformer> extensions = new ConcurrentHashMap<>();
 
     @Override
     public String getName() {
@@ -20,7 +21,7 @@ public class CompositeStubMappingTransformer
     }
 
     @Override
-    public Map<String, StubMappingTransformer> getExtensions() {
+    public Map<UUID, StubMappingTransformer> getExtensions() {
         return extensions;
     }
 

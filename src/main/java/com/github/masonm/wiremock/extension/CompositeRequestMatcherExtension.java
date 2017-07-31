@@ -8,13 +8,14 @@ import com.github.tomakehurst.wiremock.matching.RequestMatcherExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CompositeRequestMatcherExtension
     extends RequestMatcherExtension
     implements CompositeExtension<RequestMatcherExtension> {
 
-    private static final Map<String, RequestMatcherExtension> extensions = new ConcurrentHashMap<>();
+    private static final Map<UUID, RequestMatcherExtension> extensions = new ConcurrentHashMap<>();
 
     @Override
     public String getName() {
@@ -22,7 +23,7 @@ public class CompositeRequestMatcherExtension
     }
 
     @Override
-    public Map<String, RequestMatcherExtension> getExtensions() {
+    public Map<UUID, RequestMatcherExtension> getExtensions() {
         return extensions;
     }
 

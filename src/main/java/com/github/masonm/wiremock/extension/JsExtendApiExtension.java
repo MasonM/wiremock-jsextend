@@ -1,5 +1,6 @@
 package com.github.masonm.wiremock.extension;
 
+import com.github.masonm.wiremock.model.JsExtensionFactory;
 import com.github.masonm.wiremock.tasks.*;
 import com.github.tomakehurst.wiremock.admin.Router;
 import com.github.tomakehurst.wiremock.extension.AdminApiExtension;
@@ -15,11 +16,14 @@ public class JsExtendApiExtension implements AdminApiExtension {
 
     @Override
     public void contributeAdminApiRoutes(Router router) {
+        JsExtensionFactory extensionFactory = new JsExtensionFactory();
+
         router.add(GET, "/extensions/{type}", JsExtendGetAllExtensionsTask.class);
+        router.add(POST, "/extensions/{type}", new JsExtendCreateExtensionTask(extensionFactory));
         router.add(DELETE, "/extensions/{type}", JsExtendResetExtensionsTask.class);
 
-        router.add(GET, "/extensions/{type}/{name}", JsExtendGetExtensionTask.class);
-        router.add(PUT, "/extensions/{type}/{name}", JsExtendPutExtensionTask.class);
-        router.add(DELETE, "/extensions/{type}/{name}", JsExtendRemoveExtensionTask.class);
+        router.add(GET, "/extensions/{type}/{id}", JsExtendGetExtensionTask.class);
+        router.add(PUT, "/extensions/{type}/{id}", new JsExtendPutExtensionTask(extensionFactory));
+        router.add(DELETE, "/extensions/{type}/{id}", JsExtendRemoveExtensionTask.class);
     }
 }

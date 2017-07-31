@@ -5,18 +5,22 @@ import com.github.tomakehurst.wiremock.admin.model.PathParams;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
+import java.util.UUID;
+
 import static com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder.jsonResponse;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
 public class JsExtendRemoveExtensionTask extends JsExtendTask {
     @Override
     public ResponseDefinition doExecute(JsExtendType jsExtendType, Request request, PathParams pathParams) {
-        String name = pathParams.get("name");
-        if (name == null || name.length() == 0) {
-            return jsonResponse("Must supply extension name", HTTP_BAD_REQUEST);
+        UUID id;
+        try {
+            id = getIdFromParams(pathParams);
+        } catch (IllegalArgumentException ex) {
+            return jsonResponse(ex.getMessage(), HTTP_BAD_REQUEST);
         }
 
-        jsExtendType.getCompositeExtension().getExtensions().remove(name);
+        jsExtendType.getCompositeExtension().getExtensions().remove(id);
         return ResponseDefinition.ok();
     }
 }

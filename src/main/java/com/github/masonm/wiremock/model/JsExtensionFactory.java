@@ -22,10 +22,10 @@ public class JsExtensionFactory {
     // Cache ScriptEngineManager for performance
     private ScriptEngineManager scriptEngineManager = null;
 
-    public JsExtension createNew(String name, JsExtendType jsExtendType, String javascript) throws ScriptException {
+    public JsExtension createNew(JsExtendType jsExtendType, String javascript) throws ScriptException {
         final ScriptEngine engine = getScriptEngine();
         engine.eval(javascript);
-        return jsExtendType.getJsExtension(new JsExtensionSpec(name, javascript, (Invocable) engine));
+        return jsExtendType.getJsExtension(new JsExtensionSpec(javascript, (Invocable) engine));
     }
 
     private ScriptEngine getScriptEngine() throws ScriptException {

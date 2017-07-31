@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder.jsonResponse;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
@@ -14,16 +15,18 @@ import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 public class JsExtendGetExtensionTask extends JsExtendTask {
     @Override
     public ResponseDefinition doExecute(JsExtendType jsExtendType, Request request, PathParams pathParams) {
-        String name = pathParams.get("name");
-        if (name == null || name.length() == 0) {
-            return jsonResponse("Must supply extension name", HTTP_BAD_REQUEST);
+        UUID id;
+        try {
+            id = getIdFromParams(pathParams);
+        } catch (IllegalArgumentException ex) {
+            return jsonResponse(ex.getMessage(), HTTP_BAD_REQUEST);
         }
 
         Map<String, JsExtension> jsExtensions = jsExtendType.getCompositeExtension().getExtensions();
-        if (!jsExtensions.containsKey(name)) {
+        if (!jsExtensions.containsKey(id)) {
             return ResponseDefinition.notFound();
         }
 
-        return ResponseDefinition.okForJson(jsExtensions.get(name).getSpec());
+        return ResponseDefinition.okForJson(jsExtensions.get(id).getSpec());
     }
 }

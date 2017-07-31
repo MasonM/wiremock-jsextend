@@ -11,8 +11,8 @@ reset() {
 }
 
 addExtension() {
-        curl -s -X PUT -d "${3}" http://localhost:8080/__admin/extensions/$1/$2
-        echo "${3}" | sed "s/^/\t\t/"
+        curl -s -d "${2}" http://localhost:8080/__admin/extensions/$1
+        echo "${2}" | sed "s/^/\t\t/"
 }
 
 testRequest() {
@@ -26,14 +26,14 @@ echo -e "\tCreate test stub mapping"
 curl -s -d '{ "request": { "method": "ANY" }, "response": { "body": "FOO" } }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate transformer:"
-addExtension 'response-definition-transformer' 'transformer' 'function transform(request, responseDefinition) {
+addExtension 'response-definition-transformer' 'function transform(request, responseDefinition) {
         return new ResponseDefinition(201, responseDefinition.getBody() + " 1st response-definition-transformer.");
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
 
 echo -e "\n\n\tCreate another transformer:"
-addExtension 'response-definition-transformer' 'transformer2' 'function transform(request, responseDefinition) {
+addExtension 'response-definition-transformer' 'function transform(request, responseDefinition) {
         return new ResponseDefinition(201, responseDefinition.getBody() + " 2nd response-definition-transformer.");
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
@@ -48,14 +48,14 @@ echo -e "\tCreate test stub mapping"
 curl -s -d '{ "request": { "method": "ANY" }, "response": { "body": "Hello" } }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate transformer:"
-addExtension 'response-transformer' 'transformer' 'function transform(request, response) {
+addExtension 'response-transformer' 'function transform(request, response) {
         return Response.Builder.like(response).but().body(response.getBodyAsString() + " 1st response-transformer.").build();
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
 
 echo -e "\n\n\tCreate another transformer:"
-addExtension 'response-transformer' 'transformer2' 'function transform(request, response) {
+addExtension 'response-transformer' 'function transform(request, response) {
         return Response.Builder.like(response).but().body(response.getBodyAsString() + " 2nd response-transformer.").build();
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
@@ -82,7 +82,7 @@ curl -s -d '{
 }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate matcher:"
-addExtension 'request-matcher' 'matcher' 'function match(request, parameters) {
+addExtension 'request-matcher' 'function match(request, parameters) {
         var queryParam = parameters.getString("queryParam");
         return MatchResult.of(request.queryParameter(queryParam).isPresent());
 }'

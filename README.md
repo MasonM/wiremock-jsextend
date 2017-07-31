@@ -22,7 +22,7 @@ $ curl -s -d '
             .body(response.getBodyAsString() + ", and transformed!")
             .build();
    }
-}' http://localhost:8080/__admin/extensions/ResponseTransformer/bodyAppendTest > /dev/null
+' http://localhost:8080/__admin/extensions/response-transformer > /dev/null
 
 # Test transformer
 $ curl -s http://localhost:8080/test

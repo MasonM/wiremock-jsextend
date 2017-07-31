@@ -1,5 +1,6 @@
 package com.github.masonm.wiremock.extension;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.github.masonm.wiremock.model.JsExtensionSpec;
 import com.github.tomakehurst.wiremock.common.FileSource;
@@ -12,7 +13,6 @@ import javax.script.ScriptException;
 import static com.github.tomakehurst.wiremock.common.Exceptions.throwUnchecked;
 
 public class JsStubMappingTransformer extends StubMappingTransformer implements JsExtension {
-    @JsonUnwrapped
     private final JsExtensionSpec spec;
 
     public JsStubMappingTransformer(JsExtensionSpec spec) {
@@ -26,7 +26,7 @@ public class JsStubMappingTransformer extends StubMappingTransformer implements 
 
     @Override
     public String getName() {
-        return spec.getName();
+        return spec.getId().toString();
     }
 
     @Override

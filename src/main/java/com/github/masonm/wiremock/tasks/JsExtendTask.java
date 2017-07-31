@@ -7,6 +7,8 @@ import com.github.tomakehurst.wiremock.core.Admin;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 
+import java.util.UUID;
+
 import static com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder.jsonResponse;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 
@@ -30,4 +32,17 @@ public abstract class JsExtendTask implements AdminTask {
     }
 
     protected abstract ResponseDefinition doExecute(JsExtendType jsExtendType, Request request, PathParams pathParams);
+
+    protected UUID getIdFromParams(PathParams pathParams) {
+        String idString = pathParams.get("id");
+        if (idString == null || idString.length() == 0) {
+            throw new IllegalArgumentException("Must supply extension id");
+        }
+
+        try {
+            return UUID.fromString(idString);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Invalid extension id");
+        }
+    }
 }
