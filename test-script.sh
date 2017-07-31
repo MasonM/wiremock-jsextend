@@ -3,10 +3,10 @@
 set -e
 
 reset() {
-        curl -s -X DELETE http://localhost:8080/__admin/extensions/StubMappingTransformer > /dev/null
-        curl -s -X DELETE http://localhost:8080/__admin/extensions/RequestMatcherExtension > /dev/null
-        curl -s -X DELETE http://localhost:8080/__admin/extensions/ResponseTransformer > /dev/null
-        curl -s -X DELETE http://localhost:8080/__admin/extensions/ResponseDefinitionTransformer > /dev/null
+        curl -s -X DELETE http://localhost:8080/__admin/extensions/stub-mapping-transformer > /dev/null
+        curl -s -X DELETE http://localhost:8080/__admin/extensions/request-matcher > /dev/null
+        curl -s -X DELETE http://localhost:8080/__admin/extensions/response-transformer > /dev/null
+        curl -s -X DELETE http://localhost:8080/__admin/extensions/response-definition-transformer > /dev/null
         curl -s -X DELETE http://localhost:8080/__admin/mappings > /dev/null
 }
 
@@ -19,51 +19,51 @@ testRequest() {
         curl -s http://localhost:8080/test | sed "s/^/\t/"
 }
 
-echo "Testing with ResponseDefinitionTransformer"
+echo "Testing with response-definition-transformer"
 reset
 
 echo -e "\tCreate test stub mapping"
 curl -s -d '{ "request": { "method": "ANY" }, "response": { "body": "FOO" } }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate transformer:"
-addExtension 'ResponseDefinitionTransformer' 'transformer' 'function transform(request, responseDefinition) {
-        return new ResponseDefinition(201, responseDefinition.getBody() + " 1st ResponseDefinitionTransformer.");
+addExtension 'response-definition-transformer' 'transformer' 'function transform(request, responseDefinition) {
+        return new ResponseDefinition(201, responseDefinition.getBody() + " 1st response-definition-transformer.");
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
 
 echo -e "\n\n\tCreate another transformer:"
-addExtension 'ResponseDefinitionTransformer' 'transformer2' 'function transform(request, responseDefinition) {
-        return new ResponseDefinition(201, responseDefinition.getBody() + " 2nd ResponseDefinitionTransformer.");
+addExtension 'response-definition-transformer' 'transformer2' 'function transform(request, responseDefinition) {
+        return new ResponseDefinition(201, responseDefinition.getBody() + " 2nd response-definition-transformer.");
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
 
 
 
-echo -e "\n\nTesting with ResponseTransformer"
+echo -e "\n\nTesting with response-transformer"
 reset
 
 echo -e "\tCreate test stub mapping"
 curl -s -d '{ "request": { "method": "ANY" }, "response": { "body": "Hello" } }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate transformer:"
-addExtension 'ResponseTransformer' 'transformer' 'function transform(request, response) {
-        return Response.Builder.like(response).but().body(response.getBodyAsString() + " 1st ResponseTransformer.").build();
+addExtension 'response-transformer' 'transformer' 'function transform(request, response) {
+        return Response.Builder.like(response).but().body(response.getBodyAsString() + " 1st response-transformer.").build();
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
 
 echo -e "\n\n\tCreate another transformer:"
-addExtension 'ResponseTransformer' 'transformer2' 'function transform(request, response) {
-        return Response.Builder.like(response).but().body(response.getBodyAsString() + " 2nd ResponseTransformer.").build();
+addExtension 'response-transformer' 'transformer2' 'function transform(request, response) {
+        return Response.Builder.like(response).but().body(response.getBodyAsString() + " 2nd response-transformer.").build();
 }'
 echo -e "\n\n\tIssuing request for test stub mapping:"
 testRequest
 
 
 
-echo -e "\n\nTesting with RequestMatcherExtension"
+echo -e "\n\nTesting with request-matcher"
 reset
 
 echo -e "\tCreate test stub mapping"
@@ -82,7 +82,7 @@ curl -s -d '{
 }' http://localhost:8080/__admin/mappings > /dev/null
 
 echo -e "\tCreate matcher:"
-addExtension 'RequestMatcherExtension' 'matcher' 'function match(request, parameters) {
+addExtension 'request-matcher' 'matcher' 'function match(request, parameters) {
         var queryParam = parameters.getString("queryParam");
         return MatchResult.of(request.queryParameter(queryParam).isPresent());
 }'

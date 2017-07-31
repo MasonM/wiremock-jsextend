@@ -2,6 +2,7 @@ package com.github.masonm.wiremock.tasks;
 
 import com.github.masonm.wiremock.extension.CompositeExtension;
 import com.github.masonm.wiremock.extension.JsExtension;
+import com.github.masonm.wiremock.model.JsExtendType;
 import com.github.masonm.wiremock.model.JsExtensionFactory;
 import com.github.tomakehurst.wiremock.admin.model.PathParams;
 import com.github.tomakehurst.wiremock.http.Request;
@@ -20,7 +21,7 @@ public class JsExtendPutExtensionTask extends JsExtendTask {
     }
 
     @Override
-    public ResponseDefinition doExecute(CompositeExtension compositeExtension, Request request, PathParams pathParams) {
+    public ResponseDefinition doExecute(JsExtendType jsExtendType, Request request, PathParams pathParams) {
         String name = pathParams.get("name");
         if (name == null || name.length() == 0) {
             return jsonResponse("Must supply non-empty extension name", HTTP_BAD_REQUEST);
@@ -31,15 +32,13 @@ public class JsExtendPutExtensionTask extends JsExtendTask {
             return jsonResponse("Must supply the Javascript for the extension in the request body", HTTP_BAD_REQUEST);
         }
 
-        String extensionType = compositeExtension.getClass().getSuperclass().getSimpleName();
         JsExtension extension;
-
         try {
-            extension = extensionFactory.createNew(name, extensionType, javascript);
+            extension = extensionFactory.createNew(name, jsExtendType, javascript);
         } catch (ScriptException ex) {
             return jsonResponse("Error: " + ex.getMessage(), HTTP_BAD_REQUEST);
         }
-        compositeExtension.getExtensions().put(name, extension);
+        jsExtendType.getCompositeExtension().getExtensions().put(name, extension);
 
         return ResponseDefinition.created();
     }

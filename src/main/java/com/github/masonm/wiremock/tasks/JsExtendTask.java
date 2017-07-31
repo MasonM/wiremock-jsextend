@@ -1,6 +1,6 @@
 package com.github.masonm.wiremock.tasks;
 
-import com.github.masonm.wiremock.extension.*;
+import com.github.masonm.wiremock.model.JsExtendType;
 import com.github.tomakehurst.wiremock.admin.AdminTask;
 import com.github.tomakehurst.wiremock.admin.model.PathParams;
 import com.github.tomakehurst.wiremock.core.Admin;
@@ -18,30 +18,16 @@ public abstract class JsExtendTask implements AdminTask {
             return jsonResponse("Must supply extension type", HTTP_BAD_REQUEST);
         }
 
-        CompositeExtension compositeExtension;
+        String enumName = type.toUpperCase().replace("-", "_");
+        JsExtendType typeInfo;
         try {
-            compositeExtension = getCompositeExtension(type);
-        } catch (ClassNotFoundException ex) {
+            typeInfo = JsExtendType.valueOf(enumName);
+        } catch (IllegalArgumentException ex) {
             return jsonResponse("Invalid type", HTTP_BAD_REQUEST);
         }
 
-        return doExecute(compositeExtension, request, pathParams);
+        return doExecute(typeInfo, request, pathParams);
     }
 
-    protected abstract ResponseDefinition doExecute(CompositeExtension compositeExtension, Request request, PathParams pathParams);
-
-    private CompositeExtension getCompositeExtension(String type) throws ClassNotFoundException {
-        switch (type) {
-            case "RequestMatcherExtension":
-                return new CompositeRequestMatcherExtension();
-            case "ResponseTransformer":
-                return new CompositeResponseTransformer();
-            case "ResponseDefinitionTransformer":
-                return new CompositeResponseDefinitionTransformer();
-            case "StubMappingTransformer":
-                return new CompositeStubMappingTransformer();
-            default:
-                throw new ClassNotFoundException();
-        }
-    }
+    protected abstract ResponseDefinition doExecute(JsExtendType jsExtendType, Request request, PathParams pathParams);
 }

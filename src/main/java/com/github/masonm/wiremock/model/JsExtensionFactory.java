@@ -22,23 +22,10 @@ public class JsExtensionFactory {
     // Cache ScriptEngineManager for performance
     private ScriptEngineManager scriptEngineManager = null;
 
-    public JsExtension createNew(String name, String type, String javascript) throws ScriptException {
+    public JsExtension createNew(String name, JsExtendType jsExtendType, String javascript) throws ScriptException {
         final ScriptEngine engine = getScriptEngine();
         engine.eval(javascript);
-        final JsExtensionSpec spec = new JsExtensionSpec(name, javascript, (Invocable) engine);
-
-        switch(type) {
-            case "RequestMatcherExtension":
-                return new JsRequestMatcherExtension(spec);
-            case "ResponseTransformer":
-                return new JsResponseTransformer(spec);
-            case "ResponseDefinitionTransformer":
-                return new JsResponseDefinitionTransformer(spec);
-            case "StubMappingTransformer":
-                return new JsStubMappingTransformer(spec);
-            default:
-                throw new IllegalArgumentException("Invalid type: " + type);
-        }
+        return jsExtendType.getJsExtension(new JsExtensionSpec(name, javascript, (Invocable) engine));
     }
 
     private ScriptEngine getScriptEngine() throws ScriptException {

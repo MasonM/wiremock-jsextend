@@ -74,7 +74,7 @@ new WireMockServer(
 
 ## API Endpoints
 
-The extension adds the following admin API endpoints. The URL parameter `{type}` should be one of `ResponseTransformer`, `ResponseDefinitionTransformer`, `RequestMatcherExtension`, or `StubMappingTransformer`.
+The extension adds the following admin API endpoints. The URL parameter `{type}` should be one of `response-transformer`, `response-definition-transformer`, `request-matcher`, or `stub-mapping-transformer`.
 * `PUT /__admin/extensions/{type}/{name}` - Create new extension with type `{type}` and name `{name}`. The request body should be the Javascript source for the transformer or matcher function.
 * `GET /__admin/extensions/{type}/{name}` - Retrieves extension of type `{type}` and name `{name}`.
 * `DELETE /__admin/extensions/{id}/{name}` - Deletes extension of type `{type}` and name `{name}`.
@@ -104,7 +104,7 @@ Extensions must consist of a single Javascript function with a prototype matchin
     }
     ```
     
-* [StubMappingTransformer](https://github.com/tomakehurst/wiremock/blob/42a18081701390b034a7ceb1a5281a2858afa68b/src/main/java/com/github/tomakehurst/wiremock/extension/StubMappingTransformer.java#L26). Example:
+* [StubMappingTransformer](https://github.com/tomakehurst/wiremock/blob/7610d003720e1b39c994f95dcd36b3e3e48b9b9b/src/main/java/com/github/tomakehurst/wiremock/extension/StubMappingTransformer.java#L26). Example:
     ```javascript
     function transform(stubMapping) {
         var newRequest = RequestPatternUpdater
@@ -116,7 +116,7 @@ Extensions must consist of a single Javascript function with a prototype matchin
     }
     ```
 
-If you're using Java 8, then `RequestMatcherExtension`, `ResponseDefinition`, `ResponseDefinitionBuilder`, `Response`, and `MatchResult` are already imported for you. To import other classes, [use the Java.type() extension](http://www.n-k.de/riding-the-nashorn/#_invoking_java_methods_from_javascript).
+If you're using Java 8, then [many classes are already imported for you](https://github.com/MasonM/wiremock-jsextend/blob/master/src/main/java/com/github/masonm/wiremock/model/JsExtensionFactory.java#L53) are already imported for you. To import other classes, [use the Java.type() extension](http://www.n-k.de/riding-the-nashorn/#_invoking_java_methods_from_javascript).
 
 ## Request Matching
 
